@@ -3,31 +3,60 @@ package p12.exercise;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Queue;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class MultiQueueImpl<T, Q> implements MultiQueue<T, Q>{
+    private final Map<Q, Queue<T>> queues;
+
+    public MultiQueueImpl() {
+        this.queues = new HashMap<Q, Queue<T>>();
+    }
 
     @Override
     public Set<Q> availableQueues() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'availableQueues'");
+        return this.queues.keySet();
     }
 
     @Override
     public void openNewQueue(Q queue) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'openNewQueue'");
+        // Check if the argument is valid
+        if (queue == null) {
+            throw new NullPointerException();
+        }
+        if (this.queues.containsKey(queue)) {
+            throw new IllegalArgumentException("This queue already exists");
+        }
+
+        // Creates the entry in the Map and the associated List
+        this.queues.put(queue, new LinkedList<T>());
     }
 
     @Override
     public boolean isQueueEmpty(Q queue) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isQueueEmpty'");
+        // Check if the argument is valid
+        if (queue == null) {
+            throw new NullPointerException();
+        }
+        if (!this.queues.containsKey(queue)) {
+            throw new IllegalArgumentException("The queue requested doesn't exist");
+        }
+
+        return this.queues.get(queue).isEmpty();
     }
 
     @Override
     public void enqueue(T elem, Q queue) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'enqueue'");
+        // Check if the arguments are valid
+        if (queue == null || elem == null) {
+            throw new NullPointerException();
+        }
+        if (!this.queues.containsKey(queue)) {
+            throw new IllegalArgumentException("The queue requested doesn't exixsts");
+        }
+
+        this.queues.get(queue).add(elem);
     }
 
     @Override
