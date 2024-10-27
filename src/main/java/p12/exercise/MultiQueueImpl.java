@@ -106,8 +106,23 @@ public class MultiQueueImpl<T, Q> implements MultiQueue<T, Q>{
 
     @Override
     public List<T> dequeueAllFromQueue(Q queue) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'dequeueAllFromQueue'");
+        // Check if the argument is valid
+        if (queue == null) {
+            throw new NullPointerException();
+        }
+        if (!this.queues.containsKey(queue)) {
+            throw new IllegalArgumentException("The queue requested doesn't exist");
+        }
+
+        List<T> toReturn = new LinkedList<T>();
+        T element = this.queues.get(queue).poll();
+
+        while (element != null) {
+            toReturn.add(element);
+            element = this.queues.get(queue).poll();
+        }
+
+        return toReturn;
     }
 
     @Override
