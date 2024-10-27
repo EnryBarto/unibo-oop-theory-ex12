@@ -82,10 +82,7 @@ public class MultiQueueImpl<T, Q> implements MultiQueue<T, Q>{
          */
         for (Q key: this.queues.keySet()) {
             T element = this.queues.get(key).poll();
-
-            if (element != null) {
-                toReturn.put(key, element);
-            }
+            toReturn.put(key, element);
         }
 
         return toReturn;
