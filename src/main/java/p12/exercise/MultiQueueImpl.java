@@ -1,12 +1,13 @@
 package p12.exercise;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Queue;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Iterator;
 
 public class MultiQueueImpl<T, Q> implements MultiQueue<T, Q>{
     private final Map<Q, Queue<T>> queues;
@@ -127,8 +128,34 @@ public class MultiQueueImpl<T, Q> implements MultiQueue<T, Q>{
 
     @Override
     public void closeQueueAndReallocate(Q queue) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'closeQueueAndReallocate'");
+        // Check if the argument is valid
+        if (queue == null) {
+            throw new NullPointerException();
+        }
+        if (!this.queues.containsKey(queue)) {
+            throw new IllegalArgumentException("The queue requested doesn't exist");
+        }
+
+        // Check if there is another Queue available
+        if (this.availableQueues().size() == 1) {
+            throw new IllegalStateException("There's no alternative queue for moving elements to");
+        }
+
+        // Finds a new queue to move the elements
+        Iterator<Q> iterator = this.queues.keySet().iterator();
+        Q newQueue = iterator.next(); // I'm sure that there's at least one element
+        
+        while (iterator.hasNext() && newQueue == queue) {
+            newQueue = iterator.next();
+        }
+
+        // Removes all the elements from the queue and add them to the new queue
+        for (T element: this.dequeueAllFromQueue(queue)) {
+            this.enqueue(element, newQueue);
+        }
+
+        this.queues.remove(queue);
+
     }
 
 }
